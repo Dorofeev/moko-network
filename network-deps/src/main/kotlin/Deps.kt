@@ -13,10 +13,10 @@ object Deps {
     private const val testRunnerVersion = "1.2.0"
     private const val testExtJunitVersion = "1.1.1"
 
-    private const val openApiGeneratorVersion = "5.0.0"
-    private const val kotlinxSerializationVersion = "1.0.0-RC"
+    private const val openApiGeneratorVersion = "4.2.2"
+    private const val kotlinxSerializationVersion = "1.0.0"
     private const val coroutinesVersion = "1.4.2-native-mt"
-    private const val ktorClientVersion = "1.4.0"
+    private const val ktorClientVersion = "1.4.1"
 
     private const val detektVersion = "1.15.0"
 
@@ -28,9 +28,9 @@ object Deps {
     const val mokoNetworkVersion = "0.9.3"
 
     object Android {
-        const val compileSdk = 28
-        const val targetSdk = 28
-        const val minSdk = 16
+        const val compileSdk = 29
+        const val targetSdk = 29
+        const val minSdk = 21
     }
 
     object Plugins {
@@ -103,7 +103,7 @@ object Deps {
 
         object MultiPlatform {
             const val kotlinSerialization =
-                "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
             const val coroutines =
                 "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
             const val ktorClient =
