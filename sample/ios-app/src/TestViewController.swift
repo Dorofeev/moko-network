@@ -20,6 +20,7 @@ class TestViewController: UIViewController {
         viewModel.petInfo.addObserver { [weak self] info in
             self?.textView.text = info as String?
         }
+        viewModel.onCallError()
     }
     
     @IBAction func onRefreshPressed() {
