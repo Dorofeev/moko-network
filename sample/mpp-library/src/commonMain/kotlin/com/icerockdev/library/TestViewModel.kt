@@ -13,7 +13,11 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.livedata.readOnly
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.network.LanguageProvider
+import dev.icerock.moko.network.exceptionfactory.HttpExceptionFactory
+import dev.icerock.moko.network.exceptionfactory.parser.ErrorExceptionParser
+import dev.icerock.moko.network.exceptionfactory.parser.ValidationExceptionParser
 import dev.icerock.moko.network.features.ETagCacheFeature
+import dev.icerock.moko.network.features.ExceptionFeature
 import dev.icerock.moko.network.features.LanguageFeature
 import dev.icerock.moko.network.features.TokenFeature
 import dev.icerock.moko.network.generated.apis.PetApi
@@ -25,12 +29,18 @@ import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.get
-import io.ktor.http.takeFrom
+import io.ktor.http.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import news.apis.NewsApi
 
 class TestViewModel : ViewModel() {
+
+    private val json: Json by lazy {
+        Json {
+            ignoreUnknownKeys = true
+        }
+    }
 
     val exceptionHandler = ExceptionHandler(
         errorPresenter = AlertErrorPresenter(
@@ -44,6 +54,9 @@ class TestViewModel : ViewModel() {
     )
 
     private val httpClient = HttpClient {
+
+        val newjson = json
+
         install(LanguageFeature) {
             languageHeaderName = "X-Language"
             languageCodeProvider = LanguageProvider()
@@ -63,21 +76,28 @@ class TestViewModel : ViewModel() {
                 override fun getToken(): String? = "ed155d0a445e4b4fbd878fe1f3bc1b7f"
             }
         }
+        install(ExceptionFeature) {
+            exceptionFactory = HttpExceptionFactory(
+                defaultParser = ErrorExceptionParser(newjson),
+                customParsers = mapOf(
+                    HttpStatusCode.UnprocessableEntity.value to ValidationExceptionParser(newjson)
+                )
+            )
+        }
+        // disable standard BadResponseStatus - exceptionfactory do it for us
+        expectSuccess = false
+
     }
     private val petApi = PetApi(
         basePath = "https://petstore.swagger.io/v2/",
         httpClient = httpClient,
-        json = Json {
-            ignoreUnknownKeys = true
-        }
+        json = json
     )
 
     private val newApi = NewsApi(
         basePath = "https://newsapi.org/v2/",
         httpClient = httpClient,
-        json = Json {
-            ignoreUnknownKeys = true
-        }
+        json = json
     )
 
     private val _petInfo = MutableLiveData<String?>(null)
@@ -95,12 +115,12 @@ class TestViewModel : ViewModel() {
     private fun reloadPet() {
         viewModelScope.launch {
             exceptionHandler.handle {
-//                val pet = petApi.findPetsByStatus(listOf("available"))
-                val pet = httpClient.get<String> {
+                val pet = petApi.findPetsByStatus(listOf("available"))
+                /*val pet = httpClient.get<String> {
                     url {
                         takeFrom("https://www.thepolyglotdeveloper.com/css/custom.min.css")
                     }
-                }
+                }*/
                 _petInfo.value = pet.toString()
             }.execute()
         }

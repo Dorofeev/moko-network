@@ -13,10 +13,10 @@ object Deps {
     private const val testRunnerVersion = "1.2.0"
     private const val testExtJunitVersion = "1.1.1"
 
-    private const val openApiGeneratorVersion = "4.2.2"
+    private const val openApiGeneratorVersion = "5.0.0"
     private const val kotlinxSerializationVersion = "1.0.0"
     private const val coroutinesVersion = "1.4.2-native-mt"
-    private const val ktorClientVersion = "1.4.1"
+    private const val ktorClientVersion = "1.5.0"
 
     private const val detektVersion = "1.15.0"
 
@@ -25,7 +25,7 @@ object Deps {
     private const val mokoResourcesVersion = "0.14.0"
     private const val mokoMvvmVersion = "0.9.1"
     private const val mokoErrorsVersion = "0.3.1"
-    const val mokoNetworkVersion = "0.9.3"
+    const val mokoNetworkVersion = "0.9.4"
 
     object Android {
         const val compileSdk = 29
